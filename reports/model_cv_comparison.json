@@ -1,0 +1,38 @@
+{
+    "Logistic Regression (Balanced)": {
+        "cv_roc_auc_mean": 0.5787,
+        "cv_roc_auc_std": 0.0287,
+        "cv_pr_auc_mean": 0.9935,
+        "cv_pr_auc_std": 0.0007,
+        "cv_f1_mean": 0.7702,
+        "cv_recall_mean": 0.6291,
+        "cv_precision_mean": 0.9931
+    },
+    "Logistic Regression + SMOTE": {
+        "cv_roc_auc_mean": 0.5672,
+        "cv_roc_auc_std": 0.0164,
+        "cv_pr_auc_mean": 0.9933,
+        "cv_pr_auc_std": 0.0006,
+        "cv_f1_mean": 0.7503,
+        "cv_recall_mean": 0.603,
+        "cv_precision_mean": 0.993
+    },
+    "Random Forest (Balanced)": {
+        "cv_roc_auc_mean": 0.5353,
+        "cv_roc_auc_std": 0.0149,
+        "cv_pr_auc_mean": 0.9927,
+        "cv_pr_auc_std": 0.0005,
+        "cv_f1_mean": 0.9653,
+        "cv_recall_mean": 0.9403,
+        "cv_precision_mean": 0.9918
+    },
+    "XGBoost (Cost-Weighted)": {
+        "cv_roc_auc_mean": 0.5647,
+        "cv_roc_auc_std": 0.0107,
+        "cv_pr_auc_mean": 0.9932,
+        "cv_pr_auc_std": 0.0002,
+        "cv_f1_mean": 0.8266,
+        "cv_recall_mean": 0.7084,
+        "cv_precision_mean": 0.9924
+    }
+}

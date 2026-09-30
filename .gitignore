@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+data/raw/
+data/processed/
+*.db
+*.sqlite
+*.sqlite3
+models/*.joblib
+models/*.pkl
+reports/*.csv
+.DS_Store
+.vscode/

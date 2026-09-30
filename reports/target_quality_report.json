@@ -1,0 +1,82 @@
+{
+    "num_snapshots": 4,
+    "prediction_horizon_days": 90,
+    "total_observations": 196508,
+    "unique_customers": 77808,
+    "overall_churned_count": 195163,
+    "overall_retained_count": 1345,
+    "positive_class_pct": 99.32,
+    "negative_class_pct": 0.68,
+    "customer_snapshot_frequency": {
+        "4": 22643,
+        "1": 20298,
+        "2": 18963,
+        "3": 15904
+    },
+    "snapshots": [
+        {
+            "snapshot_name": "Snapshot_1",
+            "snapshot_date": "2017-09-01",
+            "split_role": "train",
+            "horizon_days": 90,
+            "total_observations": 22643,
+            "retained_count": 204,
+            "churned_count": 22439,
+            "churn_rate_pct": 99.1,
+            "retention_rate_pct": 0.9
+        },
+        {
+            "snapshot_name": "Snapshot_2",
+            "snapshot_date": "2017-12-01",
+            "split_role": "train",
+            "horizon_days": 90,
+            "total_observations": 38547,
+            "retained_count": 306,
+            "churned_count": 38241,
+            "churn_rate_pct": 99.21,
+            "retention_rate_pct": 0.79
+        },
+        {
+            "snapshot_name": "Snapshot_3",
+            "snapshot_date": "2018-03-01",
+            "split_role": "val",
+            "horizon_days": 90,
+            "total_observations": 57510,
+            "retained_count": 399,
+            "churned_count": 57111,
+            "churn_rate_pct": 99.31,
+            "retention_rate_pct": 0.69
+        },
+        {
+            "snapshot_name": "Snapshot_4",
+            "snapshot_date": "2018-06-01",
+            "split_role": "test",
+            "horizon_days": 90,
+            "total_observations": 77808,
+            "retained_count": 436,
+            "churned_count": 77372,
+            "churn_rate_pct": 99.44,
+            "retention_rate_pct": 0.56
+        }
+    ],
+    "splits": {
+        "train": {
+            "count": 61190,
+            "churn_count": 60680,
+            "retention_count": 510,
+            "retention_rate_pct": 0.83
+        },
+        "val": {
+            "count": 57510,
+            "churn_count": 57111,
+            "retention_count": 399,
+            "retention_rate_pct": 0.69
+        },
+        "test": {
+            "count": 77808,
+            "churn_count": 77372,
+            "retention_count": 436,
+            "retention_rate_pct": 0.56
+        }
+    }
+}

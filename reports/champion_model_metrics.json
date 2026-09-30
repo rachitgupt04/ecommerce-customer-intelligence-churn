@@ -1,0 +1,74 @@
+{
+    "model_name": "XGBoost Classifier (Temporal Multi-Snapshot Tuned)",
+    "selected_lookback_window": "All-Time Lookback (Full Lifecycle Panel)",
+    "feature_columns": [
+        "recency_days",
+        "order_frequency",
+        "monetary_total",
+        "avg_order_value",
+        "total_quantity",
+        "customer_tenure_days",
+        "avg_freight_value",
+        "freight_ratio",
+        "category_diversity",
+        "avg_review_score",
+        "cancelled_orders_cnt",
+        "credit_card_share",
+        "avg_installments",
+        "last_30d_orders",
+        "last_60d_orders",
+        "spending_trend_velocity",
+        "avg_delivery_delay_days"
+    ],
+    "best_hyperparameters": {
+        "learning_rate": 0.03,
+        "max_depth": 3,
+        "n_estimators": 150,
+        "subsample": 0.8
+    },
+    "validation_snapshot_metrics": {
+        "accuracy": 0.7271952703877587,
+        "precision": 0.9942015844230219,
+        "recall": 0.7295442209031535,
+        "f1_score": 0.8415556610347509,
+        "roc_auc": 0.5982726159307498,
+        "pr_auc": 0.9949800879204119,
+        "brier_score": 0.20341535535691893,
+        "true_negatives": 156,
+        "false_positives": 243,
+        "false_negatives": 15446,
+        "true_positives": 41665,
+        "specificity": 0.39097744360902253
+    },
+    "selected_threshold": 0.1,
+    "holdout_test_metrics": {
+        "accuracy": 0.7565803002261978,
+        "precision": 0.9955728194863792,
+        "recall": 0.7585819159385825,
+        "f1_score": 0.8610683215234072,
+        "roc_auc": 0.6111970756554654,
+        "pr_auc": 0.996003781965719,
+        "brier_score": 0.18889564307176485,
+        "true_negatives": 175,
+        "false_positives": 261,
+        "false_negatives": 18679,
+        "true_positives": 58693,
+        "specificity": 0.4013761467889908
+    },
+    "holdout_at_selected_threshold": {
+        "threshold": 0.1,
+        "precision": 0.9944,
+        "recall": 0.9999,
+        "f1_score": 0.9972,
+        "tp": 77367,
+        "fp": 435,
+        "tn": 1,
+        "fn": 5,
+        "total_business_cost": 4950.0
+    },
+    "split_details": {
+        "train_observations": 61190,
+        "val_observations": 57510,
+        "test_observations": 77808
+    }
+}

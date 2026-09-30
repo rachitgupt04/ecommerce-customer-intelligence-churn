@@ -1,0 +1,19 @@
+{
+    "recency_days": 0.25989,
+    "avg_installments": 0.10777,
+    "avg_review_score": 0.09141,
+    "order_frequency": 0.06663,
+    "avg_delivery_delay_days": 0.05759,
+    "avg_freight_value": 0.04702,
+    "monetary_total": 0.04492,
+    "avg_order_value": 0.03515,
+    "total_quantity": 0.03389,
+    "customer_tenure_days": 0.03191,
+    "freight_ratio": 0.03042,
+    "credit_card_share": 0.0033,
+    "category_diversity": 0.00192,
+    "last_30d_orders": 0.00147,
+    "cancelled_orders_cnt": 0.0,
+    "last_60d_orders": 0.0,
+    "spending_trend_velocity": 0.0
+}
