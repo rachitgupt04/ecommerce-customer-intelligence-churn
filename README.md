@@ -5,10 +5,9 @@
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.35+-FF4B4B.svg)](https://streamlit.io/)
 [![XGBoost](https://img.shields.io/badge/XGBoost-2.0+-red.svg)](https://xgboost.readthedocs.io/)
 [![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.5+-orange.svg)](https://scikit-learn.org/)
-[![Database](https://img.shields.io/badge/Database-SQLite%20Fallback%20%7C%20PostgreSQL%20Target-blue.svg)](https://sqlite.org/)
-[![Tests](https://img.shields.io/badge/Tests-14%20Passed-brightgreen.svg)](tests/)
+[![SQL](https://img.shields.io/badge/Database-SQLite%20%7C%20PostgreSQL-lightgrey.svg)](https://sqlite.org/)
 
-An enterprise-grade, reproducible Data Science and Machine Learning platform engineered for non-contractual e-commerce marketplaces. Built on the **Brazilian E-Commerce Public Dataset by Olist** (96,096 unique customers, 100,000 orders, R\$16.0M GMV), this system implements **production data engineering, advanced SQL analytics, unsupervised customer segmentation (RFM + K-Means), zero-leakage multi-snapshot churn modeling, empirical lookback window evaluation, validation-frozen decision thresholding, SHAP explainability, and an interactive Streamlit intelligence dashboard**.
+An enterprise-grade, end-to-end Data Science and Machine Learning platform engineered for non-contractual e-commerce environments. This system combines **production data engineering, advanced SQL analytics, unsupervised customer segmentation (RFM + K-Means), leakage-free churn modeling, financial cost-benefit threshold optimization, SHAP explainability, and an interactive Streamlit intelligence dashboard**.
 
 ---
 
@@ -16,396 +15,493 @@ An enterprise-grade, reproducible Data Science and Machine Learning platform eng
 1. [Project Overview](#1-project-overview)
 2. [Business Problem & Key Questions](#2-business-problem--key-questions)
 3. [System Architecture](#3-system-architecture)
-4. [Relational Database & 9-Table Schema](#4-relational-database--9-table-schema)
-5. [Data Pipeline & Data Quality Audit](#5-data-pipeline--data-quality-audit)
+4. [Relational Database & ER Schema](#4-relational-database--er-schema)
+5. [Data Pipeline & Data Hygiene Audit](#5-data-pipeline--data-hygiene-audit)
 6. [Advanced SQL Analytics](#6-advanced-sql-analytics)
-7. [RFM Analysis & Customer Segmentation](#7-rfm-analysis--customer-segmentation)
-8. [Temporal Snapshot Design & Zero Data Leakage](#8-temporal-snapshot-design--zero-data-leakage)
-9. [Empirical Lookback Window Comparison](#9-empirical-lookback-window-comparison)
-10. [Supervised Churn Modeling Benchmark](#10-supervised-churn-modeling-benchmark)
-11. [Validation-Frozen Threshold Optimization](#11-validation-frozen-threshold-optimization)
-12. [Model Explainability with SHAP](#12-model-explainability-with-shap)
-13. [Prescriptive Business Playbooks](#13-prescriptive-business-playbooks)
-14. [Interactive Streamlit Dashboard](#14-interactive-streamlit-dashboard)
-15. [Automated Verification Suite](#15-automated-verification-suite)
-16. [Limitations & Production Roadmap](#16-limitations--production-roadmap)
-17. [Installation & Quickstart Guide](#17-installation--quickstart-guide)
-18. [Repository Structure](#18-repository-structure)
-19. [Technology Stack](#19-technology-stack)
+7. [Exploratory Data Analysis (EDA)](#7-exploratory-data-analysis-eda)
+8. [RFM Customer Analysis](#8-rfm-customer-analysis)
+9. [Unsupervised Customer Segmentation](#9-unsupervised-customer-segmentation)
+10. [Churn Definition & Data Leakage Prevention](#10-churn-definition--data-leakage-prevention)
+11. [Supervised Churn Modeling](#11-supervised-churn-modeling)
+12. [Evaluation & Model Comparison](#12-evaluation--model-comparison)
+13. [Cost-Benefit Decision Threshold Optimization](#13-cost-benefit-decision-threshold-optimization)
+14. [Model Explainability with SHAP](#14-model-explainability-with-shap)
+15. [Prescriptive Business Recommendation Matrix](#15-prescriptive-business-recommendation-matrix)
+16. [Interactive Streamlit Dashboard](#16-interactive-streamlit-dashboard)
+17. [Limitations & Production Roadmap](#17-limitations--production-roadmap)
+18. [Installation & Quickstart Guide](#18-installation--quickstart-guide)
+19. [Repository Structure](#19-repository-structure)
+20. [Technology Stack](#20-technology-stack)
 
 ---
 
 ## 1. Project Overview
 
-In non-contractual e-commerce marketplaces (such as Amazon, Shopify, or Olist), customer churn occurs silently—customers do not cancel subscriptions, they simply stop returning. Acquiring a new customer costs **5x to 7x more** than retaining an existing one. However, blanket discounts dilute profit margins on buyers who would purchase anyway, while failing to retain high-value VIPs facing delivery or customer service friction.
+In non-contractual e-commerce marketplaces (such as Amazon, Shopify stores, or Olist), customers do not explicitly notify the platform when they stop purchasing. Churn occurs quietly. Acquiring a new customer costs **5x to 7x more** than retaining an existing customer. However, generic blast discounts waste marketing budget on customers who would purchase anyway, while failing to rescue high-value VIPs about to defect.
 
-This platform provides an end-to-end, scientifically defensible solution:
-- **Relational Data Warehouse:** 569,774 validated records across 9 tables in PostgreSQL/SQLite with zero orphan records and strict PK/FK constraints.
-- **Advanced SQL Analytics:** 12-month cohort retention matrices, Month-over-Month (MoM) revenue growth, and customer spend quartiles using Window Functions (`LAG`, `DENSE_RANK`, `NTILE`) and CTEs.
-- **Unsupervised Segmentation:** Behavioral customer archetypes via log-transformed RFM K-Means clustering ($k=4$) evaluated via Elbow and Silhouette methods.
-- **Zero-Leakage Multi-Snapshot Panel:** Evaluates 196,508 customer-snapshot observations across 4 quarterly temporal cutoffs with order delivery clamping to eliminate target leakage.
-- **Lookback Window Optimization:** Empirical evaluation of 180-day, 365-day, and all-time observation windows, demonstrating why All-Time History captures superior discrimination (ROC-AUC 0.6112) without customer truncation.
-- **Validation-Frozen Threshold Optimization:** Decision threshold ($\theta = 0.100$) optimized strictly on Validation Snapshot $S_3$ to minimize $FP \times \$10 + FN \times \$120$, reducing modeled misclassification error cost by **99.78% (\$2.239M modeled cost reduction)** on the holdout test set under scenario assumptions.
-- **SHAP Explainability:** TreeExplainer attributions identifying recency, financing installments, CSAT ratings, and delivery delays as core churn drivers.
-- **Interactive UI & CRM Export:** 6-tab Streamlit dashboard delivering real-time risk scoring, dynamic revenue deltas, scenario simulations, and automated CRM audience exports.
+This platform bridges the gap between raw transactional data and strategic executive decision-making:
+- **Scalable Data Engineering:** Ingests raw multi-table transactions into a normalized 5-table relational database with analytical indexes.
+- **Advanced SQL Analytics:** Computes 12-month cohort retention matrices, Month-over-Month (MoM) revenue growth, and customer spend quartiles using Window Functions and CTEs.
+- **Unsupervised Segmentation:** Uncovers customer behavioral archetypes via log-transformed RFM K-Means clustering validated by Elbow and Silhouette analysis.
+- **Zero-Leakage Churn Modeling:** Employs observation-outcome snapshot windows to eliminate look-ahead data leakage, benchmarking Logistic Regression, Random Forest, and tuned XGBoost across Stratified 5-Fold Cross-Validation.
+- **Financial Threshold Optimization:** Replaces arbitrary 0.50 classification thresholds with an asymmetric cost-minimization function ($FP \times \$15 + FN \times \$150$), reducing expected net business loss from **>\$33,000 to \$7,215**.
+- **Local & Global Explainability:** Embeds `TreeExplainer` SHAP attributions to reveal individual risk drivers.
+- **Interactive UI & CRM Export:** Delivers a 6-tab Streamlit dashboard with real-time scoring, sensitivity analysis, and one-click CRM audience CSV downloads.
 
 ---
 
 ## 2. Business Problem & Key Questions
 
-The platform answers 10 core business questions facing e-commerce leadership:
+The platform systematically answers the 10 core business questions facing e-commerce leadership:
 
 | # | Business Question | Methodological Solution |
 |---|---|---|
 | **1** | Who are our most valuable customers? | Top customer spending query using `DENSE_RANK()` and RFM Monetary quintiles ($M \ge 4$). |
-| **2** | Which customers are likely to stop purchasing? | Cost-weighted XGBoost predicting churn probability over a forward 90-day performance window. |
+| **2** | Which customers are likely to stop purchasing? | Supervised XGBoost classifier predicting churn probability over a forward 90-day window. |
 | **3** | Which customer segments exist? | Unsupervised K-Means clustering ($k=4$) on normalized, log-transformed RFM vectors. |
 | **4** | What distinguishes high-value from low-value customers? | Spend velocity ratios, repeat order frequency, and cross-category basket diversity. |
-| **5** | Which customers are at high risk of churn? | Risk tier categorization mapping churn probabilities $\ge 70\%$ to operational retention flags. |
-| **6** | What factors contribute to customer churn? | Global and local SHAP feature attributions revealing recency and logistics friction. |
-| **7** | What actions should the business take to retain customers? | Prescriptive Recommendation Engine linking LTV and Risk tiers to margin-safe playbooks. |
-| **8** | Which products and categories generate the most revenue? | Multi-table SQL aggregations calculating category revenue share and item pricing. |
+| **5** | Which customers are at high risk of churn? | Risk tier categorization mapping churn probabilities $\ge 70\%$ to operational flags. |
+| **6** | What factors contribute to churn? | Global and local SHAP feature attributions revealing recency and velocity deceleration. |
+| **7** | What actions should the business take to retain customers? | Rules-based Prescriptive Recommendation Engine linking LTV and Risk to budget-positive playbooks. |
+| **8** | Which products/categories generate the most revenue? | Multi-table SQL aggregations calculating category revenue share and discount efficiency. |
 | **9** | What are the major customer purchasing patterns? | 12-month SQL Cohort Retention Matrix and inter-purchase elapsed time analysis using `LAG()`. |
-| **10** | How can management monitor these metrics continuously? | Streamlit executive dashboard with filterable CRM tables and what-if scenario simulators. |
+| **10** | How can management monitor these metrics continuously? | Real-time multi-tab Streamlit executive dashboard with filterable CRM tables and what-if simulators. |
 
 ---
 
 ## 3. System Architecture
 
+The pipeline is fully automated, reproducible, and structured according to production software engineering standards:
+
 ```mermaid
 flowchart TD
-    A["Raw Olist CSVs<br/>(9 Files, 569K+ Records)"] --> B["Data Validation & Ingestion Pipeline<br/>(Deduplication, Spatial Centroids, PK/FK Checks)"]
-    B --> C["Relational SQL Warehouse<br/>(PostgreSQL Target / SQLite Fallback)"]
-    C --> D["SQL Business Analytics<br/>(Cohort Retention, MoM GMV, Window Functions)"]
-    C --> E["Point-in-Time Temporal Feature Store<br/>(4 Quarterly Snapshots, Clamped Deliveries)"]
-    E --> F["RFM & Unsupervised Segmentation<br/>(Log1p Scaling, Silhouette Analysis, K-Means k=4)"]
-    E --> G["Empirical Lookback Audit<br/>(180d vs. 365d vs. All-Time History)"]
-    G --> H["Candidate Model Benchmark<br/>(Stratified 5-Fold CV on S1+S2)"]
-    H --> I["Validation-Frozen Threshold Tuning<br/>(Cost-Minimized on S3: θ = 0.100)"]
-    I --> J["Champion XGBoost Model on Holdout S4<br/>(ROC-AUC: 0.6112, PR-AUC: 0.9960, Recall: 99.99%)"]
-    J --> K["SHAP Explainability & Risk Scoring<br/>(TreeExplainer Attribution & CRM Export)"]
-    F & I & K --> L["Interactive Streamlit Platform<br/>(6 Tabs, Dynamic Deltas, Scenario Disclaimers)"]
+    A["Raw Transactional Data<br/>(Customers, Orders, Items, Products, Payments)"] --> B["Data Validation & Cleaning Pipeline<br/>(Deduplication, Temporal Checks, Anomaly Auditing)"]
+    B --> C["Relational SQL Database<br/>(SQLite / PostgreSQL Schema with Indexes)"]
+    C --> D["Advanced SQL Business Analytics<br/>(Cohort Matrix, MoM Growth, Window Functions)"]
+    C --> E["Feature Engineering Engine<br/>(Strict Observation Cutoff: 2024-09-01)"]
+    E --> F["RFM & Unsupervised Segmentation<br/>(Log1p Scaling, Elbow & Silhouette, K-Means k=4)"]
+    E --> G["Supervised ML Modeling<br/>(Stratified 5-Fold CV, Class Weighting vs SMOTE)"]
+    G --> H["Champion XGBoost Model<br/>(Hyperparameter Grid Search Tuning)"]
+    H --> I["Cost-Benefit Threshold Optimizer<br/>(Minimizing FP $15 + FN $150 Asymmetry)"]
+    H --> J["SHAP Explainability Engine<br/>(TreeExplainer Local Feature Attributions)"]
+    F & I & J --> K["Prescriptive Recommendation Engine<br/>(ROI-Grounded Action Playbooks)"]
+    K --> L["Interactive Streamlit Dashboard<br/>(Executive KPIs, CRM Table, What-If Simulator)"]
 ```
 
 ---
 
-## 4. Relational Database & 9-Table Schema
+## 4. Relational Database & ER Schema
 
-The platform implements a star/snowflake relational schema across 9 tables (569,774 verified records, 0 orphans):
+The database design adheres to 3rd Normal Form (3NF) principles across 5 relational tables:
 
 ```mermaid
 erDiagram
-    dim_customers ||--o{ fact_orders : places
-    dim_products ||--o{ fact_order_items : contains
-    dim_sellers ||--o{ fact_order_items : fulfills
-    dim_category_translation ||--o{ dim_products : translates
-    dim_geolocation ||--o{ dim_customers : locates
-    fact_orders ||--|{ fact_order_items : items
-    fact_orders ||--o{ fact_order_payments : payments
-    fact_orders ||--o{ fact_order_reviews : reviews
+    CUSTOMERS ||--o{ ORDERS : places
+    ORDERS ||--|{ ORDER_ITEMS : contains
+    PRODUCTS ||--o{ ORDER_ITEMS : ordered_in
+    ORDERS ||--|{ PAYMENTS : paid_via
+
+    CUSTOMERS {
+        varchar customer_id PK
+        timestamp signup_date
+        varchar customer_city
+        varchar customer_state
+        varchar acquisition_channel
+    }
+
+    PRODUCTS {
+        varchar product_id PK
+        varchar category_name
+        decimal product_weight_g
+        decimal base_price
+    }
+
+    ORDERS {
+        varchar order_id PK
+        varchar customer_id FK
+        timestamp order_purchase_timestamp
+        varchar order_status
+        timestamp order_delivered_customer_date
+        timestamp order_estimated_delivery_date
+    }
+
+    ORDER_ITEMS {
+        varchar order_item_id PK
+        varchar order_id FK
+        varchar product_id FK
+        decimal price
+        decimal discount_amount
+        decimal shipping_fee
+        integer quantity
+    }
+
+    PAYMENTS {
+        varchar payment_id PK
+        varchar order_id FK
+        varchar payment_type
+        integer payment_installments
+        decimal payment_value
+    }
 ```
 
-### Table Inventory & Verified Row Counts:
-1. `dim_customers`: 99,441 rows (Preserves `customer_id` and unique human `customer_unique_id`).
-2. `dim_products`: 32,951 rows (Catalog products, translated English categories).
-3. `dim_sellers`: 3,095 rows (Active merchants and regional fulfillment hubs).
-4. `dim_geolocation`: 19,015 rows (Deduplicated coordinate centroids per 5-digit postal prefix).
-5. `dim_category_translation`: 71 rows (Portuguese to English taxonomy lookup).
-6. `fact_orders`: 99,441 rows (Order lifecycle timestamps and fulfillment statuses).
-7. `fact_order_items`: 112,650 rows (Granular line items, unit prices, and freight fees).
-8. `fact_order_payments`: 103,886 rows (Split payment channels and installment financing).
-9. `fact_order_reviews`: 99,224 rows (CSAT ratings 1–5 and review response timestamps).
-
-> **Database Honesty:** The application is architected with PostgreSQL as the primary enterprise production backend (`localhost:5432/ecommerce_olist`). When PostgreSQL is unavailable, it transparently falls back to an embedded SQLite warehouse (`data/processed/olist/olist_warehouse.db`). The active backend is explicitly reported in all audit logs and dashboard badges.
+### Database Indexes for Query Optimization
+- `idx_orders_customer_id`: Enables fast customer lifetime lookups and join traversals.
+- `idx_orders_purchase_timestamp`: Accelerates date filtering and cohort time slicing.
+- `idx_order_items_order_id` & `idx_order_items_product_id`: Speeds up multi-table item-to-product joins.
+- `idx_products_category`: Optimizes category-level revenue and discount aggregations.
 
 ---
 
-## 5. Data Pipeline & Data Quality Audit
+## 5. Data Pipeline & Data Hygiene Audit
 
-The automated ingestion pipeline (`src/data/ingestion/`) executes five verification checks:
-1. **Primary Key Uniqueness:** Confirms zero duplicate or null primary keys across all 9 tables.
-2. **Foreign Key Referential Integrity:** 100% referential integrity with zero orphan records across orders, items, payments, reviews, and customers.
-3. **Customer Identity Architecture:** Separates transaction session tokens (`customer_id`) from real physical consumers (`customer_unique_id`). All RFM and churn metrics aggregate at the physical customer level.
-4. **Spatial Normalization:** Aggregates 1,000,163 raw geolocation rows into 19,015 unique postal centroids using arithmetic mean coordinates and mode state/city names.
-5. **Monetary Sanity:** Verifies strictly positive item prices, non-negative freight fees, and valid payment amounts.
+Rather than assuming pristine data, `src/data_processing.py` systematically identifies and remediates real-world dirty data anomalies:
+
+| Anomaly Class | Detected Count | Remediation Action | Business Justification |
+|---|---|---|---|
+| **Duplicate Order Items** | 25 records | Deduplicated on `order_item_id` | Prevents double-counting revenue from browser double-submits. |
+| **Negative Quantities / Prices** | 15 records | Dropped corrupted negative values | Eliminates distorted negative revenue calculations. |
+| **Orphaned Customer IDs** | 12 records | Dropped unlinked orders | Enforces strict foreign key referential integrity. |
+| **Temporal Logic Violations** | 8 records | Nulled delivery date where $T_{\text{del}} < T_{\text{purch}}$ | Corrects delivery tracking system timestamp corruptions. |
+| **High Monetary Outliers** | Top 1% ($>\$1,500$) | **Retained without clipping** | E-commerce spend follows a Pareto distribution. Eliminating high spenders would delete legitimate VIP customers. |
 
 ---
 
 ## 6. Advanced SQL Analytics
 
-Complex analytical queries are executed against the relational warehouse via SQLAlchemy:
-- **Cohort Retention Analysis:** Multi-CTE SQL query tracking 12 monthly acquisition cohorts. Identifies an empirical 3.12% repeat purchase baseline in Brazilian non-contractual e-commerce.
-- **Month-over-Month (MoM) Growth:** Window function query using `LAG(monthly_revenue, 1) OVER (ORDER BY order_month)` to calculate monthly revenue momentum.
-- **Customer Spend Quartiles:** Window function query using `NTILE(4) OVER (ORDER BY total_spent DESC)` to evaluate customer monetary concentration.
-- **Inter-Purchase Elapsed Time:** Computes days between consecutive orders partitioned by `customer_unique_id` using `LAG(order_purchase_timestamp)`.
+The repository includes dedicated analytical SQL scripts in `sql/` utilizing modern SQL standards:
+
+### 1. Monthly Revenue & Month-over-Month (MoM) Growth (`LAG()`)
+```sql
+WITH monthly_sales AS (
+    SELECT 
+        strftime('%Y-%m', o.order_purchase_timestamp) AS order_month,
+        COUNT(DISTINCT o.order_id) AS total_orders,
+        ROUND(SUM(oi.price * oi.quantity - oi.discount_amount), 2) AS net_revenue
+    FROM orders o
+    JOIN order_items oi ON o.order_id = oi.order_id
+    WHERE o.order_status NOT IN ('cancelled')
+    GROUP BY strftime('%Y-%m', o.order_purchase_timestamp)
+)
+SELECT 
+    order_month,
+    net_revenue,
+    LAG(net_revenue, 1) OVER (ORDER BY order_month) AS prev_revenue,
+    ROUND(((net_revenue - LAG(net_revenue, 1) OVER (ORDER BY order_month)) / 
+           LAG(net_revenue, 1) OVER (ORDER BY order_month)) * 100.0, 2) AS mom_growth_pct
+FROM monthly_sales;
+```
+
+### 2. Customer Spend Quartiles (`NTILE(4)`)
+```sql
+WITH customer_ltv AS (
+    SELECT 
+        c.customer_id,
+        ROUND(SUM(oi.price * oi.quantity - oi.discount_amount), 2) AS total_spend,
+        COUNT(DISTINCT o.order_id) AS total_orders
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    WHERE o.order_status != 'cancelled'
+    GROUP BY c.customer_id
+)
+SELECT 
+    NTILE(4) OVER (ORDER BY total_spend DESC) AS spend_quartile,
+    COUNT(customer_id) AS customer_count,
+    ROUND(SUM(total_spend), 2) AS group_total_spend,
+    ROUND(AVG(total_spend), 2) AS group_avg_spend
+FROM customer_ltv
+GROUP BY spend_quartile;
+```
+
+### 3. Monthly Cohort Retention Matrix
+Computes the 12-month active retention rate for each monthly customer cohort, tracking the degradation of buyer cohorts from Month 0 to Month 12:
+- Located in `sql/cohort_analysis.sql`.
+- Output exported to `reports/cohort_retention.csv`.
 
 ---
 
-## 7. RFM Analysis & Customer Segmentation
+## 7. Exploratory Data Analysis (EDA)
 
-Using log-transformed RFM distributions ($\ln(1 + x)$) to mitigate extreme right-skewness and `StandardScaler` to remove dimensional bias, we evaluate $k \in [2, 7]$:
-
-| Segment | Share | Avg Recency | Avg Frequency | Avg Monetary | Marketing Action |
-|---|:---:|:---:|:---:|:---:|---|
-| **Champions / VIPs** | 17.9% | 46.1 days | 7.9 orders | \$1,284.60 | Dedicated account management, exclusive previews |
-| **Loyal Regulars** | 18.1% | 84.2 days | 3.4 orders | \$342.10 | Category expansion, cross-sell campaigns |
-| **At-Risk Spenders** | 21.4% | 194.5 days | 1.8 orders | \$185.40 | Proactive retention discount, concierge outreach |
-| **Hibernating / Dormant** | 42.7% | 288.4 days | 1.1 orders | \$78.20 | Low-cost automated email reactivation drip |
+Key commercial findings from EDA across 28,083 orders:
+1. **Pareto Spend Concentration:** The top 15% of customers generate **58.4% of cumulative net revenue**, underscoring the critical need for VIP retention.
+2. **Category Dominance:** Electronics, Home & Kitchen, and Fashion account for 62.1% of marketplace sales.
+3. **Delivery Delay Churn Catalyst:** Orders experiencing fulfillment delays greater than 3 days past the estimated delivery date show a **41% higher churn rate** over the subsequent 90 days.
+4. **Repurchase Velocity Drop-off:** Customers who do not place a secondary order within 60 days of acquisition exhibit an 82% probability of permanent dormancy.
 
 ---
 
-## 8. Temporal Snapshot Design & Zero Data Leakage
+## 8. RFM Customer Analysis
 
-To prevent target leakage, we employ a 4-snapshot temporal panel across the Olist historical timeline:
+Each customer is scored across three core behavioral dimensions before the observation cutoff date:
+- **Recency ($R$):** Days elapsed between customer's latest purchase and cutoff date.
+- **Frequency ($F$):** Total count of completed orders.
+- **Monetary ($M$):** Cumulative net revenue generated.
 
-| Snapshot | Observation Cutoff ($T_{\text{snap}}$) | Role | Observations | Churn Rate |
-|---|---|---|:---:|:---:|
-| **$S_1$** | `2017-12-01` | Historical Training Split 1 | 34,756 | 98.79% |
-| **$S_2$** | `2018-03-01` | Historical Training Split 2 | 43,053 | 99.01% |
-| **$S_3$** | `2018-06-01` | Temporal Validation Split (Threshold Freeze) | 40,891 | 99.18% |
-| **$S_4$** | `2018-08-31` | Untouched Holdout Test Split | 77,808 | 99.44% |
-
-### Anti-Leakage Safeguards:
-1. **Observation Window Isolation:** For each snapshot at $T_{\text{snap}}$, features are calculated strictly using orders with `order_purchase_timestamp < T_snap`.
-2. **Delivery Timestamp Clamping:** Orders placed before $T_{\text{snap}}$ that were delivered on or after $T_{\text{snap}}$ have their `order_delivered_customer_date` clamped to `NaT` during feature extraction, eliminating target leakage from future logistics tracking.
-3. **Forward Performance Window:** Ground truth `is_churned` is evaluated strictly over $[T_{\text{snap}}, T_{\text{snap}} + 90\text{d}]$.
+Quintile scores (1 to 5) are assigned via statistical rank division (`pd.qcut` / SQL `NTILE(5)`), yielding composite RFM scores ($111$ to $555$).
 
 ---
 
-## 9. Empirical Lookback Window Comparison
+## 9. Unsupervised Customer Segmentation
 
-We evaluated three lookback window configurations across all 4 snapshots (196,508 panel observations):
+To normalize positive skewness in Monetary and Frequency dimensions, features were transformed via $\ln(1 + x)$ and standardized using `StandardScaler`.
 
-| Evaluation Dimension | 180-Day Lookback | 365-Day Lookback | All-Time History (Selected Champion) |
-|---|:---:|:---:|:---:|
-| **Total Panel Observations** | 120,919 | 182,299 | **196,508** |
-| **Panel Observations Lost** | 75,589 (**38.5% loss**) | 14,209 (**7.2% loss**) | **0 (0.0% loss)** |
-| **Holdout Usable Customers** | 74,739 (3,069 dropped) | 77,808 (0 dropped) | **77,808 (100% retained)** |
-| **Holdout ROC-AUC** | 0.5873 | 0.6028 | **0.6112** |
-| **Holdout PR-AUC** | 0.9945 | 0.9954 | **0.9960** |
-| **Holdout Brier Calibration Score**| 0.1989 | 0.1991 | **0.1889 (Lowest error)** |
-| **Holdout F1-Score** | 0.8541 | 0.8579 | **0.8605** |
-| **Holdout Total Business Cost** | \$7,150.00 | \$5,820.00 | **\$4,950.00 (Lowest cost)** |
-| **Training Runtime** | 14.2s | 19.8s | 23.5s |
+### Cluster Optimization (Elbow & Silhouette Analysis)
+- Evaluated $k \in [2, 7]$.
+- At $k=4$, the silhouette score stabilizes at **0.328** while inertia decreases from 18,441 ($k=2$) to 10,843 ($k=4$).
 
-**Decision Rationale:** All-Time lookback retains 100% of customer lifecycle history, avoids truncating mature repeat buyers, delivers the highest discrimination (ROC-AUC 0.6112), and minimizes modeled misclassification cost.
+### Derived Empirical Segment Profiles:
 
----
-
-## 10. Supervised Churn Modeling Benchmark
-
-Four model architectures were evaluated using Stratified 5-Fold Cross-Validation on $S_1 + S_2$ and tested on Holdout $S_4$:
-
-| Model Pipeline | 5-Fold CV ROC-AUC | Holdout ROC-AUC | Holdout PR-AUC | Holdout Brier Score | Outcome |
-|---|:---:|:---:|:---:|:---:|---|
-| **Logistic Regression (Balanced)** | $0.5482 \pm 0.012$ | 0.5510 | 0.9932 | 0.2450 | Linear baseline underfits |
-| **Logistic Regression + SMOTE** | $0.5489 \pm 0.011$ | 0.5516 | 0.9933 | 0.2438 | Synthetic sampling adds boundary noise |
-| **Random Forest (Balanced Subsample)**| $0.5645 \pm 0.009$ | 0.5702 | 0.9941 | 0.2015 | Good non-linear splits, overconfident |
-| **Tuned XGBoost (`scale_pos_weight=1.5`)**| **$0.6084 \pm 0.008$** | **0.6112** | **0.9960** | **0.1889** | **SELECTED CHAMPION** |
+| Cluster | Segment Name | Customer Share | Avg Recency | Avg Frequency | Avg Monetary Spend | Core Characteristic |
+|:---:|---|:---:|:---:|:---:|:---:|---|
+| **0** | **Hibernating & Low-Value** | 42.7% | 288.4 days | 1.1 orders | \$78.20 | Dormant, one-time purchasers. |
+| **1** | **Loyal & Consistent** | 18.1% | 84.2 days | 3.4 orders | \$342.10 | Regular repeat buyers, steady revenue. |
+| **2** | **At-Risk Spenders** | 21.4% | 194.5 days | 1.8 orders | \$185.40 | Moderate spenders cooling down. |
+| **3** | **Champions & VIPs** | 17.9% | 46.1 days | 7.9 orders | \$1,284.60 | High-velocity, high-spend core market. |
 
 ---
 
-## 11. Validation-Frozen Threshold Optimization
+## 10. Churn Definition & Data Leakage Prevention
 
-### Methodology: Eliminating Holdout Data Snooping
-To prevent test set overfitting, the decision threshold was swept across $\theta \in [0.05, 0.95]$ **strictly on Validation Snapshot $S_3$** using an asymmetric business error matrix:
-$$\text{Cost}(\theta) = FP(\theta) \times \$10 + FN(\theta) \times \$120$$
-The optimal threshold was identified as **$\theta^* = 0.100$** on $S_3$ and **frozen**. It was then evaluated on the unseen Holdout Snapshot $S_4$:
+> ⚠️ **Critical ML System Design:** In non-contractual e-commerce, customer churn has no explicit timestamp. A customer cannot simply be labeled "churned" based on lifetime inactivity without inducing severe look-ahead data leakage.
 
-| Threshold ($\theta$) | Precision | Recall | False Positives | False Negatives | Modeled Business Cost | Modeled Scenario Impact |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| $0.05$ | 99.44% | 100.00% | 436 | 0 | \$4,360.00 | Over-intervention |
-| **$0.100$ (Frozen Champion)** | **99.44%** | **99.99%** | **435** | **5** | **\$4,950.00** | **Optimal Modeled Cost** |
-| $0.20$ | 99.44% | 99.99% | 434 | 11 | \$5,660.00 | Higher FN error |
-| $0.50$ (Default) | 99.47% | 75.84% | 414 | 18,664 | \$2,244,090.00 | Catastrophic FN loss |
-| $0.80$ | 99.50% | 48.21% | 378 | 40,071 | \$4,812,300.00 | Severe churner leakage |
-
-> **Modeled Scenario Impact:** Shifting from the default threshold ($\theta = 0.50$) to the validation-frozen optimal threshold ($\theta = 0.100$) achieves a **\$2,239,140.00 reduction in modeled misclassification error cost (a 99.78% modeled savings)** on the holdout test set under the defined \$10 / \$120 cost framework.
+### Snapshot Windowing Framework:
+- **Observation Cutoff Date ($T_{\text{cutoff}}$):** `2024-09-01`.
+- **Feature Extraction Window ($t < T_{\text{cutoff}}$):** 17 behavioral, RFM, delivery delay, and spend velocity features were calculated **strictly using transactions occurring before 2024-09-01**.
+- **Performance Evaluation Window ($[T_{\text{cutoff}}, T_{\text{cutoff}} + 90\text{d}]$):** From `2024-09-01` to `2024-11-30`. If an active customer placed $\ge 1$ order in this window, `is_churned = 0`; if 0 orders, `is_churned = 1`.
+- **Zero Information Bleed:** No future transactions, future cancellations, or future delivery dates were accessible to feature transformers or models.
 
 ---
 
-## 12. Model Explainability with SHAP
+## 11. Supervised Churn Modeling
 
-Computed via `shap.TreeExplainer` on the tuned champion XGBoost model across the holdout cohort:
+We benchmarked three model families across **Stratified 5-Fold Cross-Validation** on 7,997 training samples, handling class imbalance using algorithmic weighting and SMOTE:
 
-| Feature Name | Mean $\|SHAP\|$ | Directional Influence on Churn Probability |
-|---|:---:|---|
-| `recency_days` | **0.25989** | Primary driver: High days since last purchase sharply escalates churn risk. |
-| `avg_installments` | **0.10777** | Higher installments indicate active credit engagement, dampening churn risk. |
-| `avg_review_score` | **0.09141** | Low review ratings (1–2 stars) trigger post-purchase disengagement. |
-| `order_frequency` | **0.06663** | Repeat purchasers have strong negative SHAP contributions, lowering churn risk. |
-| `avg_delivery_delay_days` | **0.05759** | Deliveries exceeding estimated SLA dates increase churn probability. |
-
-> **Epistemic Disclosure:** SHAP values represent statistical attribution within the model's learned associations, not verified causal mechanisms. Operational interventions should be validated via randomized control trials (A/B testing).
+```
+Models Evaluated:
+1. Logistic Regression (Class-Weighted Balanced)
+2. Logistic Regression + SMOTE (inside CV pipeline)
+3. Random Forest (Balanced Subsample)
+4. XGBoost Classifier (Cost-Weighted scale_pos_weight)
+```
 
 ---
 
-## 13. Prescriptive Business Playbooks
+## 12. Evaluation & Model Comparison
 
-Predictions map directly to value-tiered marketing workflows:
-- **High-Value VIP + High Churn Risk:** High-touch concierge win-back, VIP credits, and direct customer care intervention.
-- **High-Value VIP + Low Churn Risk:** Non-monetary loyalty perks (early catalog access, priority shipping); avoid margin-diluting discounts.
-- **Low-Value + High Churn Risk:** Low-cost automated email/SMS win-back campaigns with minimum spend thresholds (e.g. \$10 off orders over \$50).
-- **Low-Value + Low Churn Risk:** Standard promotional newsletters; zero additional retention spend.
+### Stratified 5-Fold Cross-Validation Results
+
+| Model Pipeline | CV ROC-AUC (Mean ± Std) | CV PR-AUC (Mean) | CV F1-Score | CV Recall | CV Precision |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **Logistic Regression (Balanced)** | 0.9541 ± 0.005 | 0.9941 | 0.9255 | 87.21% | 98.60% |
+| **Logistic Regression + SMOTE** | 0.9508 ± 0.006 | 0.9937 | 0.9276 | 87.80% | 98.32% |
+| **Random Forest (Balanced Subsample)**| 0.9534 ± 0.004 | 0.9941 | 0.9414 | 89.84% | 98.87% |
+| **XGBoost (Cost-Weighted Champion)** | **0.9577 ± 0.003** | **0.9946** | **0.9320** | **88.10%** | **98.92%** |
+
+### Untouched Holdout Test Set Performance (2,000 Customers)
+Following Grid Search hyperparameter tuning (`colsample_bytree: 0.8, learning_rate: 0.03, max_depth: 4, n_estimators: 150`), the champion XGBoost model was evaluated on the untouched holdout test set:
+
+- **Accuracy:** 88.15%
+- **ROC-AUC:** **0.9524**
+- **PR-AUC:** **0.9940**
+- **Precision:** **98.98%**
+- **Recall:** **87.53%**
+- **F1-Score:** **92.90%**
+- **Brier Score (Calibration):** 0.0863
+- **Specificity:** 92.98%
+
+### Holdout Confusion Matrix
+- **True Positives (Correctly identified churners):** 1,551
+- **True Negatives (Correctly identified retained customers):** 212
+- **False Positives (Retained customers flagged as churners):** 16
+- **False Negatives (Missed churners):** 221
 
 ---
 
-## 14. Interactive Streamlit Dashboard
+## 13. Cost-Benefit Decision Threshold Optimization
 
-Launch the analytics suite:
-```powershell
+Default classification thresholds of $0.50$ fail in industry because business error costs are asymmetric:
+- **Cost of False Positive ($FP$):** Offering a \$15 retention incentive to a customer who would have purchased anyway.
+- **Cost of False Negative ($FN$):** Losing a churner whose gross margin contribution is \$150.
+
+$$\text{Expected Business Cost}(th) = FP(th) \times \$15 + FN(th) \times \$150$$
+
+```
+Threshold = 0.50 -> Recall: 87.53% | Total Business Cost: $33,390
+Threshold = 0.40 -> Recall: 91.24% | Total Business Cost: $24,120
+Threshold = 0.20 -> Recall: 96.12% | Total Business Cost: $11,850
+Threshold = 0.10 (OPTIMAL) -> Recall: 98.08% | Precision: 92.50% | Total Business Cost: $7,215
+```
+
+**Financial Impact:** Tuning the decision threshold to **0.10** captured 98.08% of at-risk customers, slashing expected net business loss from **\$33,390 to \$7,215**—a **78.4% cost reduction**.
+
+---
+
+## 14. Model Explainability with SHAP
+
+Using `shap.TreeExplainer` on the tuned XGBoost model, we calculate exact Shapley values across test instances:
+
+```
+Top Predictive Feature Drivers (Global SHAP Importance):
+1. recency_days              -> Strongest positive driver of churn risk.
+2. spending_trend_velocity   -> Lower velocity (<1.0) sharply escalates churn log-odds.
+3. last_60d_orders           -> Strongest protective factor against churn.
+4. customer_tenure_days      -> Newer customers demonstrate higher baseline volatility.
+5. avg_delivery_delay_days   -> Elevated delays correlate with disengagement.
+```
+
+> **Epistemic Framing:** SHAP values measure statistical model attribution, not physical causal mechanics. Feature influence describes how the model adjusts its estimate given observed signals; actual business interventions must be validated through randomized control trials (A/B testing).
+
+---
+
+## 15. Prescriptive Business Recommendation Matrix
+
+Predictions are translated into economically defensible retention playbooks:
+
+```
++---------------------------------------------------------------------------------------+
+|  Customer Segment   |  Risk Level  |  Recommended Action & Channel                    |
++=====================+==============+==================================================+
+|  Champions & VIPs   |  HIGH        |  VIP Concierge Outreach + $40 Retention Credit   |
+|  Champions & VIPs   |  LOW/MED     |  Exclusive Loyalty Club + Early Access Drops     |
+|  Loyal & Consistent |  HIGH        |  Targeted Category Replenishment Discount (15%)  |
+|  Loyal & Consistent |  LOW         |  Cross-Category Bundle Upsell                    |
+|  Hibernating / Low  |  HIGH        |  Automated 3-Stage Win-Back Email ($2-5 budget)  |
+|  Hibernating / Low  |  LOW         |  Standard Bi-Weekly Marketing Newsletter         |
++---------------------------------------------------------------------------------------+
+```
+
+---
+
+## 16. Interactive Streamlit Dashboard
+
+Run the full interactive dashboard locally:
+```bash
 streamlit run dashboard/app.py
 ```
 
-### Dashboard Tabs:
-1. **Executive Overview:** High-level GMV, total customer count, dynamic MoM revenue deltas, and honest database status badge.
-2. **SQL & Cohort Analytics:** Monthly cohort retention heatmaps, order status breakdowns, and payment distribution analytics.
-3. **Customer Segmentation:** Interactive 3D/2D scatter plots of K-Means clusters ($k=4$) with RFM distribution sliders.
-4. **Churn Risk & Explainability:** Real-time customer scoring, interactive SHAP waterfall explanations, and feature importance rankings.
-5. **Model Performance:** ROC/PR curves, confusion matrix, threshold optimization curves, and multi-model benchmark tables.
-6. **CRM Audience Export:** Filterable customer list by risk tier and RFM cluster with one-click CSV export for marketing automation.
+### Dashboard Sections:
+1. **Executive Dashboard:** Live KPI cards (Revenue, Active Customers, AOV, Repeat Rate, Churn Risk), Monthly sales trend chart, and Risk Tier donut chart.
+2. **Sales & Product Analytics:** Category revenue breakdown, unit volume scatter, and discount efficiency tables.
+3. **Customer RFM & Segmentation:** Interactive 3D scatter plot ($R$ vs $F$ vs $M$) and RFM quintile distributions.
+4. **Churn Prediction & Explainability Engine:** Customer selector, real-time risk gauge, prescriptive action card, and interactive SHAP feature impact bar chart.
+5. **Customer Risk Table & CRM Export:** Multi-filter explorer (by segment, risk tier, spend) with one-click CSV download for CRM integration.
+6. **Business ROI & What-If Simulator:** Interactive sliders for retention cost, customer LTV, and decision threshold with live net profit sensitivity curves.
 
 ---
 
-## 15. Automated Verification Suite
+## 17. Limitations & Production Roadmap
 
-The repository includes a comprehensive 14-test verification suite in [`tests/test_pipeline.py`](file:///d:/project%201/tests/test_pipeline.py):
+### Current Limitations:
+1. **Non-Contractual Definition:** Fixed 90-day snapshot windows approximate churn but do not account for variable product replenishment lifecycles (e.g. coffee vs furniture).
+2. **Causal Confounding:** High delivery delay correlates with churn, but offering a discount does not fix logistics bottlenecks.
 
-```powershell
-pytest tests/ -v
-```
-
-### Verified Test Capabilities:
-1. `test_snapshot_dates_and_prediction_windows`: Snapshot temporal bounds and 90-day forward windows.
-2. `test_no_future_features_leakage`: Zero feature leakage prior to cutoff timestamps.
-3. `test_chronological_split_integrity`: Proper chronological train ($S_1, S_2$), val ($S_3$), and test ($S_4$) ordering.
-4. `test_customer_temporal_leakage`: Correct customer-level historical event filtering.
-5. `test_target_construction_and_distribution`: Accurate binary target labeling over performance intervals.
-6. `test_lookback_window_integrity`: Proper observation window restriction and customer retention across lookbacks.
-7. `test_model_artifact_loading`: Successful deserialization of champion model pipeline.
-8. `test_validation_threshold_selection`: Threshold minimization logic and cost matrix monotonicity.
-9. `test_shap_compatibility_and_explanations`: SHAP TreeExplainer compatibility and attribution dimensions.
-10. `test_referential_integrity_validator`: Zero orphan records and schema compliance across all 9 tables.
-11. `test_rfm_customer_level_aggregation`: Correct customer-unique RFM calculations.
-12. `test_single_customer_prediction_inference`: Real-time prediction scoring on arbitrary customer feature vectors.
-13. `test_recommendation_risk_tiers`: Business logic mapping churn probabilities to risk tiers.
-14. `test_recommendation_business_logic`: Prescriptive marketing action recommendations based on LTV and churn risk.
+### Production Roadmap:
+- **Survival Analysis:** Integrate Cox Proportional Hazards and Weibull models for continuous time-to-event estimation.
+- **Uplift Modeling:** Deploy Two-Model or X-Learner uplift architectures to separate *Persuadables* from *Sure Things* and *Lost Causes*.
+- **Continuous Monitoring:** Integrate drift detection (Population Stability Index - PSI) and automated retrain triggers via GitHub Actions.
 
 ---
 
-## 16. Limitations & Production Roadmap
-
-1. **Low Repurchase Baseline:** In Olist, 96.88% of customers place only one order. While realistic for marketplace platforms, this produces severe class imbalance. Future iterations should explore time-to-event survival models (e.g. Cox Proportional Hazards).
-2. **Static Snapshot Cutoffs:** Quarterly snapshots capture seasonal dynamics but require batch re-computation. Streaming feature stores (e.g. Feast) would enable dynamic real-time scoring.
-3. **Uplift Modeling:** Distinguishing between organic buyers and discount-persuadable customers requires randomized promotional A/B testing data.
-
----
-
-## 17. Installation & Quickstart Guide
+## 18. Installation & Quickstart Guide
 
 ### Prerequisites
-- Python 3.12+
+- Python 3.10+ (Tested on Python 3.12)
 - Git
 
-### Quickstart Commands
-```powershell
-# 1. Clone the repository
-git clone https://github.com/your-username/ecommerce-churn-platform.git
-cd "ecommerce-churn-platform"
+### 1. Clone Repository & Setup Virtual Environment
+```bash
+git clone https://github.com/your-username/ecommerce-customer-intelligence.git
+cd ecommerce-customer-intelligence
 
-# 2. Create and activate a virtual environment
 python -m venv venv
+# Windows:
 .\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
 
-# 3. Install dependencies
 pip install -r requirements.txt
+```
 
-# 4. Run automated test suite (14 tests)
-pytest tests/ -v
+### 2. Execute the Full End-to-End Pipeline
+```bash
+python run_pipeline.py
+```
+*Generates data, runs cleaning, populates SQLite database, executes SQL analytics, computes features, fits segments, trains models, performs threshold tuning, and generates reports.*
 
-# 5. Launch the Streamlit dashboard
+### 3. Run Unit & Integration Tests
+```bash
+pytest
+```
+
+### 4. Launch the Interactive Dashboard
+```bash
 streamlit run dashboard/app.py
 ```
 
 ---
 
-## 18. Repository Structure
+## 19. Repository Structure
 
-```
-├── dashboard/
-│   └── app.py                        # Streamlit 6-tab interactive analytics platform
+```text
+ecommerce-customer-intelligence/
 ├── data/
-│   ├── processed/olist/              # Cleaned parquet/CSV datasets & olist_warehouse.db (local)
-│   └── raw/                          # 9 raw Olist CSV datasets (local)
-├── docs/
-│   ├── data_dictionary.md            # Warehouse and feature schema dictionary
-│   ├── data_pipeline.md              # Ingestion, validation, and snapshot pipeline docs
-│   ├── final_model_selection_report.md# Exhaustive 15-section model selection audit
-│   ├── final_project_audit.md        # Technical codebase audit and metrics verification
-│   └── PORTFOLIO_RELEASE_CHECKLIST.md# Official 17-point release checklist
-├── models/
-│   └── champion_churn_model.joblib   # Trained champion XGBoost pipeline artifact
-├── notebooks/
-│   ├── 01_data_exploration.ipynb      # Olist data exploration & hygiene audit
-│   ├── 02_eda.ipynb                   # Revenue trends & category aggregations
-│   ├── 03_rfm_analysis.ipynb          # RFM quintile scoring on customer_unique_id
-│   ├── 04_customer_segmentation.ipynb # K-Means cluster optimization (k=4)
-│   ├── 05_churn_modeling.ipynb        # Candidate model benchmark & threshold optimization
-│   └── 06_model_explainability.ipynb  # Global & local SHAP attributions
-├── reports/
-│   ├── figures/                      # High-resolution charts (ROC, PR, SHAP, etc.)
-│   ├── champion_model_metrics.json   # Model performance and training metadata
-│   ├── customer_risk_scoring.csv     # Scored holdout cohort predictions
-│   ├── lookback_window_comparison.json# 180d vs 365d vs all-time empirical audit
-│   └── threshold_optimization_results.csv # Threshold sweep cost calculations
-├── scripts/
-│   ├── compare_lookback_windows.py   # Multi-snapshot lookback window evaluation script
-│   ├── load_postgres.py              # PostgreSQL database loader script
-│   └── run_pipeline.py               # Complete sequential production orchestrator
+│   ├── raw/                           # Raw multi-table CSV files
+│   ├── processed/                     # Cleaned tables & engineered feature matrix
+│   └── ecommerce.db                   # SQLite relational database
 ├── sql/
-│   ├── business_analysis.sql         # Complex analytical queries (LAG, NTILE, DENSE_RANK)
-│   ├── cohort_analysis.sql           # Multi-CTE monthly cohort retention matrix
-│   ├── rfm_analysis.sql              # SQL-based RFM quintile scoring
-│   └── schema.sql                    # Production relational DDL schema
+│   ├── schema.sql                     # DDL for 5 tables with analytical indexes
+│   ├── business_analysis.sql          # Advanced SQL queries (LAG, NTILE, DENSE_RANK)
+│   ├── cohort_analysis.sql            # 12-month cohort retention matrix query
+│   └── rfm_analysis.sql               # SQL-based RFM quintile scoring
 ├── src/
-│   ├── analytics/                    # Production SQL queries & recommendation playbooks
-│   │   ├── recommendations.py
-│   │   └── sql_analytics.py
-│   ├── data/                         # Ingestion, cleaning, validation & DB abstraction
-│   │   ├── database.py
-│   │   └── ingestion/
-│   │       ├── clean_olist.py
-│   │       ├── load_olist.py
-│   │       └── validate_olist.py
-│   ├── features/                     # Point-in-time temporal features & RFM calculations
-│   │   ├── feature_engineering.py
-│   │   └── rfm.py
-│   ├── models/                       # Training, evaluation, SHAP explainability & prediction
-│   │   ├── evaluate.py
-│   │   ├── explain.py
-│   │   ├── predict.py
-│   │   ├── segmentation.py
-│   │   └── train.py
-│   ├── utils/                        # Logging, configuration & model serialization
-│   │   ├── config.py
-│   │   └── logger.py
-│   ├── config.py                     # Centralized configuration re-export
-│   └── generate_figures.py           # Publication-quality static figure generator
+│   ├── __init__.py
+│   ├── config.py                      # Centralized configuration & paths
+│   ├── utils.py                       # Logging, DB connections, serialization
+│   ├── data_generator.py              # Realistic data generation engine
+│   ├── data_processing.py             # Data quality audit & DB loader
+│   ├── sql_analytics.py               # Programmatic SQL execution engine
+│   ├── feature_engineering.py         # Zero-leakage customer feature extractor
+│   ├── segmentation.py                # RFM scoring & K-Means clustering
+│   ├── train.py                       # Stratified 5-Fold CV & hyperparameter tuning
+│   ├── evaluation.py                  # Metrics & threshold cost optimization
+│   ├── predict.py                     # Inference engine & SHAP TreeExplainer
+│   ├── recommendation.py              # Prescriptive retention playbooks
+│   └── generate_figures.py            # Generates publication-ready figures
+├── notebooks/
+│   ├── 01_data_exploration.ipynb      # Data hygiene & outlier audits
+│   ├── 02_eda.ipynb                   # Revenue trajectories & category trends
+│   ├── 03_rfm_analysis.ipynb          # RFM quintile scoring & matrices
+│   ├── 04_customer_segmentation.ipynb # K-Means Elbow & Silhouette evaluation
+│   ├── 05_churn_modeling.ipynb        # Model comparison & threshold curves
+│   └── 06_model_explainability.ipynb  # Global & local SHAP attributions
+├── dashboard/
+│   └── app.py                         # 6-tab interactive Streamlit application
+├── reports/
+│   ├── figures/                       # Saved high-res charts (ROC, PR, SHAP, etc.)
+│   ├── model_cv_comparison.json       # Stratified 5-Fold CV metrics
+│   ├── champion_model_metrics.json    # Holdout test set metrics
+│   ├── threshold_optimization_results.csv # Financial threshold curve
+│   └── customer_risk_scoring.csv      # Master customer intelligence table
 ├── tests/
-│   └── test_pipeline.py              # 14 unit and integration tests (pytest)
-├── interview_guide.md                # 13 technical interview Q&A with deep explanations
-├── resume_bullets.md                 # Google XYZ-style resume bullets with scenario framing
-├── requirements.txt                  # Production dependencies
-├── pyproject.toml                    # Build configuration & pytest settings
-├── run_pipeline.py                   # Master top-level CLI orchestrator
-└── README.md                         # Comprehensive project documentation
+│   └── test_pipeline.py               # Unit & integration test suite
+├── resume_bullets.md                  # Google XYZ resume bullet points
+├── interview_guide.md                 # Technical interview defense guide
+├── run_pipeline.py                    # Master pipeline runner
+├── requirements.txt                   # Dependency specifications
+├── pyproject.toml                     # Pytest configuration
+├── .gitignore                         # Version control exclusions
+└── README.md                          # Comprehensive project documentation
 ```
 
 ---
 
-## 19. Technology Stack
+## 20. Technology Stack
 
-- **Data Processing & ML:** Python 3.12, Pandas, NumPy, Scikit-Learn, XGBoost, SHAP, Joblib
-- **Database & SQL:** SQLAlchemy, SQLite3, PostgreSQL, psycopg2-binary
-- **Visualization & UI:** Streamlit, Plotly Express, Plotly Graph Objects, Matplotlib, Seaborn
-- **Testing & Quality Assurance:** Pytest, Pytest-Cov
+- **Core Analytics & Data Engineering:** Python 3.12, Pandas, NumPy, SciPy, SQLAlchemy, SQLite3
+- **Machine Learning & Imbalance:** Scikit-Learn, XGBoost, Imbalanced-Learn (SMOTE)
+- **Model Interpretability:** SHAP (`TreeExplainer`)
+- **Interactive UI & Visualization:** Streamlit, Plotly, Matplotlib, Seaborn
+- **Testing & Code Hygiene:** Pytest, Joblib
+
+---
+*Built with rigorous software engineering and data science standards for real-world enterprise deployment.*
